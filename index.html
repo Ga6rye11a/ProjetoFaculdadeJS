@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adote um Pet — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        min-height: 100vh;
+        background: #1A1A2E;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Nunito', sans-serif;
+        overflow: hidden;
+      }
+
+      /* ── checkered tiles ── */
+      .checker-wrap {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .checker-wrap::before,
+      .checker-wrap::after {
+        content: '';
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        background-image: repeating-conic-gradient(#F5C842 0% 25%, transparent 0% 50%);
+        background-size: 22px 22px;
+        opacity: .28;
+        border-radius: 6px;
+      }
+      .checker-wrap::before { top: -20px; left: -20px; }
+      .checker-wrap::after  { bottom: -20px; right: -20px; transform: rotate(180deg); }
+
+      /* ── floating sparks ── */
+      .spark { position: fixed; pointer-events: none; animation: bob 3.5s ease-in-out infinite; }
+      .spark svg { display: block; }
+      .s1 { top: 9%;  left: 5%;  animation-delay: 0s; }
+      .s2 { top: 15%; right: 7%; animation-delay: .9s; }
+      .s3 { bottom: 14%; left: 4%; animation-delay: 1.8s; }
+      .s4 { bottom: 10%; right: 5%; animation-delay: .4s; }
+      @keyframes bob {
+        0%,100% { transform: translateY(0) rotate(0deg); }
+        50%      { transform: translateY(-12px) rotate(20deg); }
+      }
+
+      /* ── main card ── */
+      .card {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        width: min(960px, 96vw);
+        min-height: 560px;
+        background: #F5F0E1;
+        border: 3.5px solid #1A1A2E;
+        border-radius: 28px;
+        box-shadow: 10px 10px 0 #F5C842;
+        overflow: hidden;
+      }
+
+      /* ══════════════════════════════
+         LEFT — illustration panel
+      ══════════════════════════════ */
+      .panel-left {
+        flex: 0 0 420px;
+        background: #F5C842;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        padding-bottom: 32px;
+        overflow: hidden;
+      }
+
+      /* wavy doodle lines in background */
+      .doodle-lines {
+        position: absolute;
+        top: 10px; right: 0;
+        width: 200px;
+        opacity: .18;
+      }
+
+      /* pink blob */
+      .blob {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        background: #F06292;
+        border-radius: 50% 42% 55% 40% / 48% 52% 44% 56%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-58%, -52%);
+      }
+
+      /* pets SVG */
+      .cat-wrap {
+        position: absolute;
+        bottom: 52px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 400px;
+      }
+
+      /* tagline pill */
+      .tagline-pill {
+        position: relative;
+        z-index: 5;
+        background: #1A1A2E;
+        color: #F5C842;
+        font-family: 'Fredoka One', cursive;
+        font-size: .95rem;
+        padding: 8px 22px;
+        border-radius: 100px;
+        letter-spacing: .04em;
+      }
+
+      /* heart deco */
+      .heart-deco {
+        position: absolute;
+        top: 36%;
+        right: 30px;
+        z-index: 6;
+        animation: bob 2.8s ease-in-out infinite;
+        animation-delay: .6s;
+      }
+
+      /* rotating stamp */
+      .stamp {
+        position: absolute;
+        bottom: 28px;
+        left: 28px;
+        z-index: 6;
+        width: 78px; height: 78px;
+        border-radius: 50%;
+        background: #F5F0E1;
+        border: 3px dashed #1A1A2E;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: .44rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: #1A1A2E;
+        text-align: center;
+        line-height: 1.5;
+        animation: spin-slow 12s linear infinite;
+      }
+      @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+      /* ══════════════════════════════
+         RIGHT — form panel
+      ══════════════════════════════ */
+      .panel-right {
+        flex: 1;
+        padding: 52px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .brand-label {
+        font-family: 'Fredoka One', cursive;
+        font-size: .8rem;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: #7C4DFF;
+        margin-bottom: 8px;
+      }
+
+      .panel-right h1 {
+        font-family: 'Fredoka One', cursive;
+        font-size: 2.6rem;
+        color: #1A1A2E;
+        line-height: 1.1;
+        margin-bottom: 4px;
+      }
+      .panel-right h1 em {
+        font-style: normal;
+        color: #7C4DFF;
+      }
+
+      .subtitle {
+        font-size: .88rem;
+        color: #888;
+        margin-bottom: 30px;
+      }
+
+      .form-group { margin-bottom: 16px; }
+
+      label.field-label {
+        display: block;
+        font-weight: 900;
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        color: #1A1A2E;
+        margin-bottom: 6px;
+      }
+
+      input[type=email],
+      input[type=password] {
+        width: 100%;
+        padding: 12px 16px;
+        background: #fff;
+        border: 2.5px solid #1A1A2E;
+        border-radius: 12px;
+        font-family: 'Nunito', sans-serif;
+        font-size: .95rem;
+        color: #1A1A2E;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+      }
+      input:focus {
+        border-color: #7C4DFF;
+        box-shadow: 4px 4px 0 #7C4DFF;
+      }
+
+      .row-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+        font-size: .82rem;
+      }
+      .remember {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        color: #1A1A2E;
+        cursor: pointer;
+      }
+      .remember input { accent-color: #7C4DFF; width: 17px; height: 17px; cursor: pointer; }
+      .forgot { color: #7C4DFF; font-weight: 900; text-decoration: none; }
+      .forgot:hover { text-decoration: underline; }
+
+      .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: #7C4DFF;
+        color: #fff;
+        border: 2.5px solid #1A1A2E;
+        border-radius: 14px;
+        font-family: 'Fredoka One', cursive;
+        font-size: 1.1rem;
+        letter-spacing: .04em;
+        cursor: pointer;
+        box-shadow: 4px 4px 0 #1A1A2E;
+        transition: transform .15s, box-shadow .15s;
+      }
+      .btn-login:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #1A1A2E; }
+      .btn-login:active { transform: translate(2px,2px);  box-shadow: 2px 2px 0 #1A1A2E; }
+
+      .divider {
+        display: flex; align-items: center; gap: 12px;
+        margin: 20px 0;
+        color: #bbb; font-size: .78rem; font-weight: 700;
+      }
+      .divider::before,.divider::after { content:''; flex:1; height:1.5px; background:#ddd; }
+
+      .btn-google {
+        width: 100%;
+        padding: 12px;
+        background: #fff;
+        color: #1A1A2E;
+        border: 2.5px solid #1A1A2E;
+        border-radius: 14px;
+        font-family: 'Nunito', sans-serif;
+        font-size: .9rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 3px 3px 0 #1A1A2E;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        transition: transform .15s, box-shadow .15s;
+      }
+      .btn-google:hover  { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 #1A1A2E; }
+      .btn-google:active { transform: translate(2px,2px);  box-shadow: 1px 1px 0 #1A1A2E; }
+
+      .signup-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: .84rem;
+        color: #888;
+      }
+      .signup-link a { color: #F06292; font-weight: 900; text-decoration: none; }
+      .signup-link a:hover { text-decoration: underline; }
+
+      @media (max-width: 700px) {
+        .panel-left { display: none; }
+        .panel-right { padding: 36px 24px; }
+      }
+    </style>
+  </head>
+  <body>
+
+  <div class="checker-wrap"></div>
+
+  <!-- floating sparks -->
+  <div class="spark s1"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5Z" fill="#7C4DFF"/></svg></div>
+  <div class="spark s2"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5Z" fill="#F5C842"/></svg></div>
+  <div class="spark s3"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5Z" fill="#F06292"/></svg></div>
+  <div class="spark s4"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2l1.5 6.5L20 12l-6.5 1.5L12 22l-1.5-6.5L4 12l6.5-1.5Z" fill="#7C4DFF"/></svg></div>
+
+  <div class="card">
+
+    <!-- ═══════════ LEFT PANEL ═══════════ -->
+    <div class="panel-left">
+
+      <!-- wavy background lines -->
+      <svg class="doodle-lines" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 40 Q60 10 110 40 Q160 70 200 40" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M0 90 Q50 60 100 90 Q150 120 200 90" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M10 140 Q60 110 120 140 Q170 170 200 140" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+
+      <!-- pink blob -->
+      <div class="blob"></div>
+
+      <!-- heart decoration -->
+      <div class="heart-deco">
+        <svg width="52" height="48" viewBox="0 0 52 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26 44 C26 44 4 30 4 16 C4 9 9.5 4 16 4 C20 4 24 6 26 9 C28 6 32 4 36 4 C42.5 4 48 9 48 16 C48 30 26 44 26 44Z" fill="#7C4DFF" stroke="#1A1A2E" stroke-width="3"/>
+        </svg>
+      </div>
+
+      <!-- PETS ILLUSTRATION: DOG (left) + CAT (right) — hand-drawn outline style -->
+      <div class="cat-wrap">
+        <svg viewBox="0 0 420 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- ══════════ DOG (left) ══════════ -->
+          <g transform="translate(10,10)">
+
+            <!-- tail — curvy up-right -->
+            <path d="M158 240 Q185 210 178 178 Q174 162 162 168"
+                  stroke="#F5C842" stroke-width="16" stroke-linecap="round" fill="none"/>
+            <path d="M158 240 Q185 210 178 178 Q174 162 162 168"
+                  stroke="#1A1A2E" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+            <!-- body — rounded rectangle -->
+            <rect x="50" y="168" width="118" height="100" rx="36"
+                  fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+
+            <!-- back leg right -->
+            <ellipse cx="152" cy="275" rx="18" ry="12" fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+            <!-- back foot right toes -->
+            <ellipse cx="144" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="155" cy="287" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="166" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+
+            <!-- back leg left -->
+            <ellipse cx="66" cy="275" rx="18" ry="12" fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+            <!-- back foot left toes -->
+            <ellipse cx="58" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="69" cy="287" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="80" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+
+            <!-- front right leg -->
+            <rect x="120" y="240" width="28" height="44" rx="14"
+                  fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+            <!-- front right paw toes -->
+            <ellipse cx="112" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="123" cy="287" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="134" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+
+            <!-- front left leg -->
+            <rect x="70" y="240" width="28" height="44" rx="14"
+                  fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+            <!-- front left paw toes -->
+            <ellipse cx="62" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="73" cy="287" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="84" cy="284" rx="7" ry="5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+
+            <!-- head -->
+            <ellipse cx="100" cy="128" rx="62" ry="58" fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+
+            <!-- LEFT floppy ear -->
+            <path d="M48 100 Q20 90 22 134 Q24 162 52 160 Q68 158 68 138"
+                  fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- ear inner -->
+            <path d="M50 108 Q30 102 32 136 Q34 154 54 152"
+                  fill="#F06292" opacity=".5" stroke="none"/>
+
+            <!-- RIGHT floppy ear -->
+            <path d="M152 100 Q180 90 178 134 Q176 162 148 160 Q132 158 132 138"
+                  fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- ear inner -->
+            <path d="M150 108 Q170 102 168 136 Q166 154 146 152"
+                  fill="#F06292" opacity=".5" stroke="none"/>
+
+            <!-- LEFT eye -->
+            <ellipse cx="78" cy="118" rx="13" ry="14" fill="#1A1A2E"/>
+            <ellipse cx="83" cy="113" rx="4" ry="5" fill="white"/>
+            <!-- RIGHT eye -->
+            <ellipse cx="122" cy="118" rx="13" ry="14" fill="#1A1A2E"/>
+            <ellipse cx="127" cy="113" rx="4" ry="5" fill="white"/>
+
+            <!-- big round nose -->
+            <ellipse cx="100" cy="140" rx="14" ry="11" fill="#1A1A2E"/>
+            <ellipse cx="95" cy="136" rx="4" ry="3" fill="white" opacity=".6"/>
+            <!-- mouth -->
+            <path d="M88 150 Q100 162 112 150" stroke="#1A1A2E" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <!-- tongue -->
+            <ellipse cx="100" cy="162" rx="10" ry="8" fill="#F06292" stroke="#1A1A2E" stroke-width="2"/>
+
+            <!-- cheeks -->
+            <ellipse cx="62"  cy="140" rx="14" ry="8" fill="#F06292" opacity=".3"/>
+            <ellipse cx="138" cy="140" rx="14" ry="8" fill="#F06292" opacity=".3"/>
+
+            <!-- collar -->
+            <rect x="72" y="174" width="56" height="14" rx="7" fill="#7C4DFF" stroke="#1A1A2E" stroke-width="2"/>
+            <!-- tag -->
+            <ellipse cx="100" cy="191" rx="8" ry="8" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+
+          </g>
+
+          <!-- ══════════ CAT (right) ══════════ -->
+          <g transform="translate(210,20)">
+
+            <!-- tail — curled around body -->
+            <path d="M140 270 Q175 240 170 195 Q168 168 148 178"
+                  stroke="#F5C842" stroke-width="16" stroke-linecap="round" fill="none"/>
+            <path d="M140 270 Q175 240 170 195 Q168 168 148 178"
+                  stroke="#1A1A2E" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+            <!-- body — rounder, fluffier -->
+            <ellipse cx="90" cy="232" rx="80" ry="72" fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+
+            <!-- fur texture lines on body -->
+            <path d="M48 200 Q56 210 50 222" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".5"/>
+            <path d="M36 218 Q46 226 40 240" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".5"/>
+            <path d="M130 200 Q122 210 128 222" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".5"/>
+            <path d="M142 218 Q132 226 138 240" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".5"/>
+
+            <!-- front paws sitting -->
+            <ellipse cx="60"  cy="298" rx="26" ry="16" fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+            <ellipse cx="120" cy="298" rx="26" ry="16" fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+            <!-- toes left -->
+            <ellipse cx="48"  cy="304" rx="6" ry="4.5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="60"  cy="307" rx="6" ry="4.5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="72"  cy="304" rx="6" ry="4.5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <!-- toes right -->
+            <ellipse cx="108" cy="304" rx="6" ry="4.5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="120" cy="307" rx="6" ry="4.5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="132" cy="304" rx="6" ry="4.5" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+
+            <!-- head — wider, round persian style -->
+            <ellipse cx="90" cy="118" rx="70" ry="64" fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5"/>
+
+            <!-- fluffy cheek fur left -->
+            <path d="M28 118 Q16 128 20 144 Q24 158 40 156 Q52 154 52 140"
+                  fill="#F5C842" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+            <!-- fluffy cheek fur right -->
+            <path d="M152 118 Q164 128 160 144 Q156 158 140 156 Q128 154 128 140"
+                  fill="#F5C842" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+
+            <!-- fur lines on cheeks -->
+            <path d="M30 124 Q24 132 26 140" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".6"/>
+            <path d="M150 124 Q156 132 154 140" stroke="#1A1A2E" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".6"/>
+
+            <!-- LEFT pointed ear -->
+            <polygon points="44,76  30,28  72,66"
+                     fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5" stroke-linejoin="round"/>
+            <polygon points="48,72  38,38  66,64" fill="#F06292" opacity=".55"/>
+
+            <!-- RIGHT pointed ear -->
+            <polygon points="136,76  150,28  108,66"
+                     fill="#F5C842" stroke="#1A1A2E" stroke-width="2.5" stroke-linejoin="round"/>
+            <polygon points="132,72  142,38  114,64" fill="#F06292" opacity=".55"/>
+
+            <!-- fur on top of head -->
+            <path d="M68 58 Q76 46 90 52 Q104 46 112 58"
+                  stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+            <!-- LEFT eye — big round persian -->
+            <ellipse cx="68" cy="108" rx="15" ry="16" fill="#1A1A2E"/>
+            <ellipse cx="73" cy="103" rx="5"  ry="6"  fill="white"/>
+            <ellipse cx="66" cy="115" rx="3"  ry="2"  fill="white" opacity=".4"/>
+            <!-- RIGHT eye -->
+            <ellipse cx="112" cy="108" rx="15" ry="16" fill="#1A1A2E"/>
+            <ellipse cx="117" cy="103" rx="5"  ry="6"  fill="white"/>
+            <ellipse cx="110" cy="115" rx="3"  ry="2"  fill="white" opacity=".4"/>
+
+            <!-- small nose -->
+            <path d="M84 130 Q90 126 96 130 L90 138 Z" fill="#F06292" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
+            <!-- mouth lines -->
+            <path d="M90 138 Q82 146 78 142" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M90 138 Q98 146 102 142" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+            <!-- cheek blush -->
+            <ellipse cx="54"  cy="126" rx="14" ry="8" fill="#F06292" opacity=".28"/>
+            <ellipse cx="126" cy="126" rx="14" ry="8" fill="#F06292" opacity=".28"/>
+
+            <!-- whiskers LEFT — 3 lines -->
+            <line x1="10"  y1="122" x2="72"  y2="128" stroke="#1A1A2E" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="8"   y1="131" x2="72"  y2="133" stroke="#1A1A2E" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="12"  y1="140" x2="72"  y2="138" stroke="#1A1A2E" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- whiskers RIGHT -->
+            <line x1="170" y1="122" x2="108" y2="128" stroke="#1A1A2E" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="172" y1="131" x2="108" y2="133" stroke="#1A1A2E" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="168" y1="140" x2="108" y2="138" stroke="#1A1A2E" stroke-width="1.8" stroke-linecap="round"/>
+
+            <!-- collar -->
+            <rect x="62" y="170" width="56" height="12" rx="6" fill="#7C4DFF" stroke="#1A1A2E" stroke-width="2"/>
+            <!-- bell -->
+            <ellipse cx="90" cy="185" rx="7" ry="7" fill="#F5C842" stroke="#1A1A2E" stroke-width="2"/>
+            <ellipse cx="90" cy="188" rx="3" ry="2.5" fill="#1A1A2E"/>
+
+          </g>
+
+          <!-- decorative + signs -->
+          <text x="198" y="60"  fill="#1A1A2E" font-size="18" font-family="sans-serif" font-weight="900" opacity=".6">+</text>
+          <text x="4"   y="290" fill="#1A1A2E" font-size="18" font-family="sans-serif" font-weight="900" opacity=".6">+</text>
+          <text x="390" y="290" fill="#1A1A2E" font-size="18" font-family="sans-serif" font-weight="900" opacity=".6">+</text>
+
+        </svg>
+      </div>
+
+      <!-- tagline pill -->
+      <div class="tagline-pill" style="position:relative;z-index:6;">🐾 Adote um Pet</div>
+
+      <!-- rotating stamp -->
+      <div class="stamp">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1A2E" stroke-width="2.5">
+          <path d="M9 3a3 3 0 0 0-3 3c0 .55.15 1.07.41 1.52A3 3 0 0 0 3 10.5c0 1.38.93 2.54 2.2 2.88C5.08 13.58 5 13.79 5 14a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3c0-.21-.08-.42-.2-.62A3 3 0 0 0 21 10.5a3 3 0 0 0-3.41-2.98A3 3 0 0 0 15 3a3 3 0 0 0-2.63 1.56A3 3 0 0 0 9 3z"/>
+        </svg>
+        ADOTE<br>UM PET
+      </div>
+
+    </div>
+
+    <!-- ═══════════ RIGHT PANEL ═══════════ -->
+    <div class="panel-right">
+      <p class="brand-label">✦ Adote um Pet</p>
+      <h1>Entre na<br>sua <em>conta!</em></h1>
+      <p class="subtitle">Acesse e acompanhe suas adoções com amor. 🐾</p>
+
+      <div class="form-group">
+        <label class="field-label" for="email">E-mail</label>
+        <input type="email" id="email" placeholder="seuemail@exemplo.com" />
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="password">Senha</label>
+        <input type="password" id="password" placeholder="••••••••" />
+      </div>
+
+      <div class="row-flex">
+        <label class="remember">
+          <input type="checkbox" /> Lembrar de mim
+        </label>
+        <a href="#" class="forgot">Esqueci minha senha</a>
+      </div>
+
+      <button class="btn-login">Entrar agora!</button>
+
+      <div class="divider">ou continue com</div>
+
+      <button class="btn-google">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Entrar com Google
+      </button>
+
+      <p class="signup-link">
+        Não tem uma conta? <a href="#">Cadastre-se aqui!</a>
+      </p>
+    </div>
+
+  </div>
+  </body>
+</html>
