@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Usuario {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  senha    String
+  adocoes  Adocao[]
+}
+
+model Pet {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  especie   String
+  status    String   @default("DISPONIVEL")
+  adocoes   Adocao[]
+}
+
+model Adocao {
+  id         Int      @id @default(autoincrement())
+  petId      Int
+  usuarioId  Int
+  status     String   @default("PENDENTE")
+  
+  // Relacionamentos para simular as junções de banco (JPAQL)
+  pet        Pet      @relation(fields: [petId], references: [id])
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id])
+}

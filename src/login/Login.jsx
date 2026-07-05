@@ -212,3 +212,29 @@ export default function Login() {
     </>
   )
 }
+async function handleSubmit(e) {
+    e.preventDefault()
+    try {
+      // Faz o pedido para o nosso back-end Node.js
+      const response = await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Login efetuado com sucesso!");
+        console.log("Resposta da API:", data);
+      } else {
+        alert("Erro ao fazer login: " + data.erro);
+      }
+
+    } catch (error) {
+      console.error("Erro na comunicação com a API:", error);
+      alert("Não foi possível conectar ao servidor.");
+    }
+  }
